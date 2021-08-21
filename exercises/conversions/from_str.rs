@@ -11,7 +11,6 @@ struct Person {
     age: usize,
 }
 
-// I AM NOT DONE
 
 // Steps:
 // 1. If the length of the provided string is 0, an error should be returned
@@ -26,6 +25,25 @@ struct Person {
 impl FromStr for Person {
     type Err = Box<dyn error::Error>;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        if s.len() == 0 {
+            Err(Box::new(std::fmt::Error))
+        } else {
+            let vals: Vec<&str> = s.split(",").collect();
+            if vals.len() != 2 {
+                Err(Box::new(std::fmt::Error))
+            } else {
+                let nm = vals[0];
+                if nm.len() == 0 {
+                    Err(Box::new(std::fmt::Error))
+                } else {
+                    let parse_result = vals[1].parse::<usize>();
+                    match parse_result {
+                        Ok(val) => Ok(Person { name: nm.to_string(), age: val }),
+                        _ => Err(Box::new(std::fmt::Error))
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -89,4 +107,5 @@ mod tests {
     fn trailing_comma_and_some_string() {
         assert!("John,32,man".parse::<Person>().is_err());
     }
+
 }
